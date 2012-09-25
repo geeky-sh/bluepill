@@ -7,7 +7,7 @@ module Bluepill
 
     def initialize(options = {})
       self.log_file = options[:log_file]
-      self.base_dir = options[:base_dir] || File.join(ENV['HOME'], '.bluepill')
+      self.base_dir = options[:base_dir] || File.join(ENV['HOME'], 'code', 'almaconnect','temp', 'bluepill')
       self.sockets_dir = File.join(base_dir, 'socks')
       self.pids_dir = File.join(base_dir, 'pids')
 

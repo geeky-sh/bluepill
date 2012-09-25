@@ -11,8 +11,8 @@ RbConfig = Config unless Object.const_defined?(:RbConfig)
 
 # Default options
 options = {
-  :log_file   => File.join(ENV['HOME'], '.bluepill', 'logs', 'bluepill.log'),
-  :base_dir   => File.join(ENV['HOME'], '.bluepill'),
+  :log_file   => File.join(ENV['HOME'], 'code', 'almaconnect','log' , 'bluepill.log'),
+  :base_dir   => File.join(ENV['HOME'], 'code', 'almaconnect','temp', 'bluepill'),
   :privileged => true,
   :timeout    => 10,
   :attempts   => 1
