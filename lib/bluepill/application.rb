@@ -14,7 +14,7 @@ module Bluepill
 
       @foreground   = options[:foreground]
       self.log_file = options[:log_file]
-      self.base_dir = options[:base_dir] || '/var/run/bluepill'
+      self.base_dir = options[:base_dir] || File.join(ENV['HOME'], '.bluepill')
       self.pid_file = File.join(self.base_dir, 'pids', self.name + ".pid")
       self.pids_dir = File.join(self.base_dir, 'pids', self.name)
       self.kill_timeout = options[:kill_timeout] || 10

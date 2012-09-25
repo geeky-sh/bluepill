@@ -11,8 +11,8 @@ RbConfig = Config unless Object.const_defined?(:RbConfig)
 
 # Default options
 options = {
-  :log_file   => "/var/log/bluepill.log",
-  :base_dir   => "/var/run/bluepill",
+  :log_file   => File.join(ENV['HOME'], '.bluepill', 'logs', 'bluepill.log'),
+  :base_dir   => File.join(ENV['HOME'], '.bluepill'),
   :privileged => true,
   :timeout    => 10,
   :attempts   => 1
