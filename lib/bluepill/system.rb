@@ -45,6 +45,7 @@ module Bluepill
     # Returns the pid of the child that executes the cmd
     def daemonize(cmd, options = {})
       rd, wr = IO.pipe
+      std_out = $stdout
 
       if child = Daemonize.safefork
         # we do not wanna create zombies, so detach ourselves from the child exit status
@@ -78,7 +79,7 @@ module Bluepill
           exit
         end
 
-        daemon_id = Daemonize.call_as_daemon(to_daemonize, nil, cmd)
+        daemon_id = call_as_daemon(to_daemonize, std_out, nil)
 
         File.open(options[:pid_file], "w") {|f| f.write(daemon_id)}
 
@@ -234,5 +235,54 @@ module Bluepill
         $stderr.reopen(io_err, APPEND_MODE) if io_err
       end
     end
+
+    ## custom function of daemons gem, customized to redirect output on stdout
+    def call_as_daemon(block, std_out = nil, app_name = nil)
+      # we use a pipe to return the PID of the daemon
+      rd, wr = IO.pipe
+
+      if tmppid = Daemonize.safefork
+        # in the parent
+
+        wr.close
+        pid = rd.read.to_i
+        rd.close
+
+        ::Process.waitpid(tmppid)
+
+        return pid
+      else
+        # in the child
+
+        rd.close
+
+        # Detach from the controlling terminal
+        unless sess_id = ::Process.setsid
+          raise Daemons.RuntimeException.new('cannot detach from controlling terminal')
+        end
+
+        # Prevent the possibility of acquiring a controlling terminal
+        trap 'SIGHUP', 'IGNORE'
+        exit if pid = Daemonize.safefork
+
+        wr.write(::Process.pid)
+        wr.close
+
+        $0 = app_name if app_name
+
+        ::Dir.chdir "/" # Release old working directory
+
+        ## custom addition
+        std_out ? $stdout.reopen(std_out) : $stdout.reopen("/dev/null")
+        $stderr.reopen($stdout)
+        ##
+
+
+        block.call
+
+        exit
+      end
+    end
+
   end
 end
