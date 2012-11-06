@@ -277,6 +277,17 @@ module Bluepill
         $stderr.reopen($stdout)
         ##
 
+        # Make sure all file descriptors are closed
+        ObjectSpace.each_object(IO) do |io|
+          unless [STDIN, STDOUT, STDERR].include?(io)
+            begin
+              unless io.closed?
+                io.close
+              end
+            rescue ::Exception
+            end
+          end
+        end
 
         block.call
 
