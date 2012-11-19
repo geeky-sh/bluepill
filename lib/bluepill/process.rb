@@ -270,6 +270,8 @@ module Bluepill
     end
 
     def is_a_zombie
+      logger.info "pid value is #{actual_pid}"
+      return false if actual_pid.nil? or actual_pid == ""
       zombie_sym = `ps aux | awk '$2 == #{actual_pid} {print $8}'`
       zombie_sym == 'Z'
     end
