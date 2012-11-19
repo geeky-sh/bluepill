@@ -258,9 +258,12 @@ module Bluepill
 
       @process_running ||= signal_process(0)
       
-      logger.info `ps aux`
-      
-      @process_running = nil if is_a_zombie
+      if is_a_zombie
+        logger.info "This process is a zombie"
+      else
+        logger.info "Not a zombie"
+      end
+
       # the process isn't running, so we should clear the PI
       self.clear_pid unless @process_running
       @process_running
