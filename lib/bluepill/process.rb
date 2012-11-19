@@ -270,7 +270,7 @@ module Bluepill
     end
 
     def is_a_zombie
-      zombie_sym = `ps aux | grep rails | awk '$2 == #{@actual_pid}' {print $8}`
+      zombie_sym = `ps aux | grep rails | awk '$2 == #{@actual_pid} {print $8}'`
       zombie_sym == 'Z'
     end
 
