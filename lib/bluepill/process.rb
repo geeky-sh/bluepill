@@ -327,6 +327,8 @@ module Bluepill
       end
       self.unlink_pid # TODO: we only write the pid file if we daemonize, should we only unlink it if we daemonize?
 
+      self.clear_pid # to ensure that the process will not be monitored and will be forgotten
+
       self.skip_ticks_for(stop_grace_time)
     end
 
