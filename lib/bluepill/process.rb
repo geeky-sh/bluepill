@@ -257,9 +257,18 @@ module Bluepill
       @process_running = nil if force # clear existing state if forced
 
       @process_running ||= signal_process(0)
-      # the process isn't running, so we should clear the PID
+      
+      logger.info `ps aux`
+      
+      @process_running = nil if is_a_zombie
+      # the process isn't running, so we should clear the PI
       self.clear_pid unless @process_running
       @process_running
+    end
+
+    def is_a_zombie
+      zombie_sym = `ps aux | grep rails | awk '$2 == #{@actual_pid}' {print $8}`
+      zombie_sym == 'Z'
     end
 
     def start_process
@@ -326,8 +335,6 @@ module Bluepill
         signal_process("TERM")
       end
       self.unlink_pid # TODO: we only write the pid file if we daemonize, should we only unlink it if we daemonize?
-
-      self.clear_pid # to ensure that the process will not be monitored and will be forgotten
 
       self.skip_ticks_for(stop_grace_time)
     end
