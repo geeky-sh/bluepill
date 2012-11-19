@@ -273,6 +273,7 @@ module Bluepill
       logger.info "pid value is #{actual_pid}"
       return false if actual_pid.nil? or actual_pid == ""
       zombie_sym = `ps aux | awk '$2 == #{actual_pid} {print $8}'`
+      logger.info "process type is #{zombie_sym}"
       zombie_sym == 'Z'
     end
 
