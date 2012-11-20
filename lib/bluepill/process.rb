@@ -258,11 +258,7 @@ module Bluepill
 
       @process_running ||= signal_process(0)
       
-      if is_a_zombie
-        logger.info "This process is a zombie"
-      else
-        logger.info "Not a zombie"
-      end
+      @process_running = nil if is_a_zombie
 
       # the process isn't running, so we should clear the PI
       self.clear_pid unless @process_running
@@ -270,11 +266,9 @@ module Bluepill
     end
 
     def is_a_zombie
-      logger.info "pid value is #{actual_pid}"
       return false if actual_pid.nil? or actual_pid == ""
       zombie_sym = `ps aux | awk '$2 == #{actual_pid} {print $8}'`
-      logger.info "process type is #{zombie_sym}"
-      zombie_sym == 'Z'
+      zombie_sym.strip == "Z"
     end
 
     def start_process
